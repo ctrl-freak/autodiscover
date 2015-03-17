@@ -1,0 +1,29 @@
+server {
+    server_name  autodiscover.domain.com;
+
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/cert.crt;
+    ssl_certificate_key /etc/nginx/ssl/key.key;
+
+    access_log  /var/log/nginx/autodiscover.domain.com.access.log;
+    error_log /var/log/nginx/autodiscover.domain.com.error.log warn;
+
+    root   /var/www/default/;
+    index  autodiscover.php;
+
+    error_page 405 =200 $uri;
+
+    location / {
+        if ($uri !~ ^/autodiscover/autodiscover\.php) {
+            rewrite ^ /autodiscover/autodiscover.php;
+        }
+    }
+
+    location ~ \.php$ {
+#       fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include /etc/nginx/fastcgi_params;
+    }
+}
