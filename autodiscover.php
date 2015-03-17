@@ -9,7 +9,7 @@ switch(strtolower($configXML)) {
         case '/autodiscover/autodiscover.xml': {
                 $data = file_get_contents('php://input');
                 preg_match("/\<EMailAddress\>(.*?)\<\/EMailAddress\>/", $data, $matches);
-                $output = autodiscover($matches[1]);
+                $output = autodiscover(@$matches[1]);
                 break;
         }
         case '/mail/config-v1.1.xml':
